@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 
 from .client import OpenAICompatibleClient
+from .comparison import compare_prediction_modes
 from .datasets import prepare_tico19, prepare_wmt25_track1, prepare_wmt25_track2
 from .downloads import download_tico19, download_wmt25
 from .loaders import load_glossary
@@ -51,6 +52,7 @@ def _parser() -> argparse.ArgumentParser:
     prepare.add_argument("--target-lang", default="es")
     prepare.add_argument("--terminology", type=Path)
     prepare.add_argument("--limit", type=int)
+    prepare.add_argument("--per-year-limit", type=int)
 
     benchmark = subparsers.add_parser(
         "benchmark",
@@ -69,6 +71,15 @@ def _parser() -> argparse.ArgumentParser:
 
     score = subparsers.add_parser("score", help="score an existing predictions JSONL")
     score.add_argument("--predictions", type=Path, required=True)
+
+    compare = subparsers.add_parser(
+        "compare", help="paired bootstrap comparison of two prediction modes"
+    )
+    compare.add_argument("--predictions", type=Path, required=True)
+    compare.add_argument("--baseline", default="no_term")
+    compare.add_argument("--treatment", default="proper")
+    compare.add_argument("--bootstrap-samples", type=int, default=1000)
+    compare.add_argument("--seed", type=int, default=17)
     return parser
 
 
@@ -127,6 +138,7 @@ def main() -> int:
                 args.input / "ranking/references/track2",
                 args.output,
                 limit=args.limit,
+                per_year_limit=args.per_year_limit,
             )
         else:
             if args.terminology is None:
@@ -157,6 +169,16 @@ def main() -> int:
         return 0
     if args.command == "score":
         print(json.dumps(score_predictions(args.predictions), ensure_ascii=False, indent=2))
+        return 0
+    if args.command == "compare":
+        result = compare_prediction_modes(
+            args.predictions,
+            baseline=args.baseline,
+            treatment=args.treatment,
+            bootstrap_samples=args.bootstrap_samples,
+            seed=args.seed,
+        )
+        print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0
     raise AssertionError(args.command)
 

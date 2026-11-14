@@ -24,10 +24,14 @@ def _load_terms(path: Path, target_code: str) -> tuple[GlossaryEntry, ...]:
     entries: list[GlossaryEntry] = []
     with path.open("r", encoding="utf-8-sig", newline="") as handle:
         for row in csv.DictReader(handle):
+            source = str(row.get("sourceString") or "").strip()
+            target = str(row.get("targetString") or "").strip()
+            if not source or not target:
+                continue
             entries.append(
                 GlossaryEntry(
-                    source=str(row.get("sourceString") or ""),
-                    target=str(row.get("targetString") or ""),
+                    source=source,
+                    target=target,
                     source_lang="en",
                     target_lang=target_code,
                     domain="medical and public health",

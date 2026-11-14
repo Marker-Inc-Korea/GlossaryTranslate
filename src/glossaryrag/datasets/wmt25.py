@@ -68,6 +68,7 @@ def prepare_wmt25_track2(
     *,
     years: Iterable[int] = range(2015, 2025),
     limit: int | None = None,
+    per_year_limit: int | None = None,
 ) -> int:
     records: list[BenchmarkRecord] = []
     for year in years:
@@ -80,6 +81,8 @@ def prepare_wmt25_track2(
         )
         for row_index, row in enumerate(_read_rows(path)):
             if limit is not None and len(records) >= limit:
+                break
+            if per_year_limit is not None and row_index >= per_year_limit:
                 break
             records.append(
                 BenchmarkRecord(

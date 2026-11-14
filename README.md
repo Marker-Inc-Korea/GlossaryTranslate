@@ -92,6 +92,7 @@ glossaryrag prepare wmt25-track1 \
 # Finance, document level
 glossaryrag prepare wmt25-track2 \
   --input data/raw/wmt25 \
+  --per-year-limit 2 \
   --output data/processed/wmt25-finance.jsonl
 ```
 
@@ -110,6 +111,17 @@ glossaryrag benchmark \
 
 The runner is resumable. It appends raw predictions and writes a neighboring
 `*.metrics.json` report.
+
+Use a paired bootstrap comparison to quantify the change from the same source
+sentences translated without and with the correct glossary:
+
+```bash
+glossaryrag compare \
+  --predictions results/wmt25-it-en-es.predictions.jsonl \
+  --baseline no_term \
+  --treatment proper \
+  --bootstrap-samples 1000
+```
 
 ## Evidence plan
 
@@ -143,4 +155,3 @@ own domains, languages, models, and glossary quality.
 
 Code is Apache-2.0. Dataset and model licenses are separate. See `NOTICE` and
 `docs/public-data.md`.
-

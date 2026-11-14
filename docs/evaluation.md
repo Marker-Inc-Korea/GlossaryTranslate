@@ -17,3 +17,6 @@ Use paired records and deterministic decoding. Keep raw predictions and exact co
 lines. For a public report, include model revision, runtime version, hardware, seeds,
 dataset revision, and source hashes.
 
+Report paired 95% bootstrap confidence intervals for the change from `no_term`
+to `proper`. The resampling unit is the source record, so baseline and treatment
+outputs from the same input remain paired.
