@@ -14,8 +14,13 @@ set -euo pipefail
 VLLM_BIN="${VLLM_BIN:-/data/home/mk01/.venvs/focus_tempnew/bin/vllm}"
 PYTHON="${PYTHON:-$PROJECT_DIR/.venv/bin/python}"
 MODEL_NAME="${MODEL_NAME:-Qwen/Qwen3-8B}"
+RUN_TAG="${RUN_TAG:-v1}"
 PORT="${PORT:-$((24000 + SLURM_JOB_ID % 1000))}"
 BASE_URL="http://127.0.0.1:$PORT"
+
+export VLLM_USE_FLASHINFER_SAMPLER=0
+export VLLM_WORKER_MULTIPROC_METHOD=spawn
+export VLLM_BATCH_INVARIANT=1
 
 cd "$PROJECT_DIR"
 mkdir -p logs results
@@ -59,7 +64,7 @@ run_one() {
   local modes="$3"
   "$PYTHON" -m glossaryrag.cli benchmark \
     --dataset "$dataset" \
-    --output "results/${name}.predictions.jsonl" \
+    --output "results/${name}-${RUN_TAG}.predictions.jsonl" \
     --base-url "$BASE_URL" \
     --model "$MODEL_NAME" \
     --modes "$modes" \
