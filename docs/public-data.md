@@ -23,3 +23,6 @@ reference rows in an observed `PubMed_8` segment. French is therefore excluded f
 the release benchmark rather than reporting a misleading score. The medical study
 uses Russian, Latin American Spanish, and Simplified Chinese after language-script
 and sampled row-alignment checks.
+
+The exact downloaded files used by the public report are pinned by SHA-256 in
+[`reports/public-source-files.sha256`](../reports/public-source-files.sha256).
