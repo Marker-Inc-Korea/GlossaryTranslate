@@ -136,6 +136,10 @@ The initial public study uses one Apache-2.0 open model and three domains:
 See [evaluation protocol](docs/evaluation.md) and
 [public data notes](docs/public-data.md).
 
+For production planning, see the
+[organization adoption guide](docs/organization-adoption.md). For release steps,
+see [GitHub and Hugging Face publishing](docs/publishing.md).
+
 ## Design choices
 
 - **Inference-time integration:** organizations can update terminology without model retraining.

@@ -8,6 +8,6 @@
 - [ ] Publish raw aggregate results, not restricted benchmark text.
 - [ ] Create the GitHub repository and push `main`.
 - [ ] Create the Hugging Face Space from `huggingface/space`.
+- [ ] Build the Space bundle with `scripts/export_hf_space.py` and smoke-test it.
 - [ ] Optionally create a Hugging Face dataset repository for public result tables.
 - [ ] Add final GitHub and Hugging Face URLs to the README.
-
