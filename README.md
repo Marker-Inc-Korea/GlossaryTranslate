@@ -141,6 +141,18 @@ See [evaluation protocol](docs/evaluation.md) and
 [public data notes](docs/public-data.md). Exact reference model and inference settings
 are recorded in [reference runtime](docs/reference-runtime.md).
 
+## Public benchmark result
+
+Using `Qwen/Qwen3-8B`, the correct matched glossary improved terminology success in
+all eight evaluated domain/language studies. Paired gains ranged from **+9.9 to +51.0
+percentage points**. IT and finance also showed clear BLEU/chrF gains. Medical results
+were mixed for general reference similarity: Russian improved, while Spanish and
+Chinese traded a small BLEU/chrF change for higher terminology adherence. This is why
+the package reports both metric families and does not claim universal quality gains.
+
+See the full [public benchmark report](reports/public-benchmark-public-v2.md), including
+random-term controls and paired 95% bootstrap intervals.
+
 For production planning, see the
 [organization adoption guide](docs/organization-adoption.md). For release steps,
 see [GitHub and Hugging Face publishing](docs/publishing.md). The project's scope

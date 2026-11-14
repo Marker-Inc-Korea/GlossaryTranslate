@@ -18,7 +18,11 @@ def main() -> int:
     package_output = output / "glossaryrag"
     if package_output.exists():
         shutil.rmtree(package_output)
-    shutil.copytree(root / "src" / "glossaryrag", package_output)
+    shutil.copytree(
+        root / "src" / "glossaryrag",
+        package_output,
+        ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+    )
     return 0
 
 

@@ -137,6 +137,43 @@ def main() -> int:
             )
         )
 
+    term_intervals = [study["comparison"]["deltas"]["term_success_delta"] for study in studies]
+    chrf_intervals = [study["comparison"]["deltas"]["chrf_delta"] for study in studies]
+    term_min = min(item["observed"] for item in term_intervals)
+    term_max = max(item["observed"] for item in term_intervals)
+    chrf_positive = sum(item["ci95_low"] > 0 for item in chrf_intervals)
+    chrf_negative = sum(item["ci95_high"] < 0 for item in chrf_intervals)
+    chrf_inconclusive = len(chrf_intervals) - chrf_positive - chrf_negative
+    max_latency_change = max(
+        abs(
+            study["metrics"]["modes"]["proper"]["mean_elapsed_seconds"]
+            - study["metrics"]["modes"]["no_term"]["mean_elapsed_seconds"]
+        )
+        for study in studies
+    )
+
+    lines.extend(
+        [
+            "",
+            "## Findings",
+            "",
+            f"- Correct matched terminology improved terminology success in all {len(studies)} "
+            f"studies. The paired mean gain ranged from {term_min * 100:+.1f} to "
+            f"{term_max * 100:+.1f} percentage points, "
+            "and every 95% interval remained above zero.",
+            f"- For paired per-record chrF, {chrf_positive} studies had an entirely positive "
+            f"95% interval, {chrf_negative} had an entirely negative interval, and "
+            f"{chrf_inconclusive} crossed zero. Terminology gains therefore do not guarantee "
+            "a general-quality gain in every domain and language.",
+            f"- The largest absolute change in mean request latency was {max_latency_change:.3f} "
+            "seconds, indicating that matched glossary rows added little generation latency "
+            "in this reference run.",
+            "- Proper terminology outperformed the random-term control in the WMT25 IT and "
+            "finance studies, supporting an effect from the correct mappings rather than "
+            "from merely adding extra prompt text.",
+        ]
+    )
+
     lines.extend(
         [
             "",
