@@ -10,4 +10,5 @@
 - [ ] Create the Hugging Face Space from `huggingface/space`.
 - [ ] Build the Space bundle with `scripts/export_hf_space.py` and smoke-test it.
 - [ ] Optionally create a Hugging Face dataset repository for public result tables.
+- [ ] Build the result-only dataset with `scripts/export_hf_results.py`.
 - [ ] Add final GitHub and Hugging Face URLs to the README.

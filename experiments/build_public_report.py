@@ -105,8 +105,9 @@ def main() -> int:
             "",
             "## Proper glossary effect versus no glossary",
             "",
-            "Positive values favor the correct glossary. Intervals are paired 95% bootstrap",
-            "confidence intervals over source records.",
+        "Positive values favor the correct glossary. Deltas are paired means of",
+        "per-record scores; intervals are 95% bootstrap confidence intervals over",
+        "source records. The score table above reports corpus-level BLEU and chrF.",
             "",
             "| Study | Paired records | BLEU delta [95% CI] | chrF delta [95% CI] | "
             "Terminology-success delta [95% CI] |",

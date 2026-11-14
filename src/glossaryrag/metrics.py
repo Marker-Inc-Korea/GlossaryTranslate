@@ -37,6 +37,8 @@ def term_success(output: str, entries: Iterable[GlossaryEntry]) -> TermScore:
 def corpus_translation_metrics(
     predictions: Sequence[str],
     references: Sequence[str],
+    *,
+    target_language: str = "",
 ) -> dict[str, float]:
     if len(predictions) != len(references):
         raise ValueError("prediction and reference counts differ")
@@ -44,6 +46,36 @@ def corpus_translation_metrics(
         import sacrebleu
     except ImportError as exc:
         raise RuntimeError("install the evaluation extra: pip install '.[eval]'") from exc
-    bleu = sacrebleu.corpus_bleu(list(predictions), [list(references)])
+    bleu = sacrebleu.corpus_bleu(
+        list(predictions),
+        [list(references)],
+        tokenize=bleu_tokenizer(target_language),
+    )
     chrf = sacrebleu.corpus_chrf(list(predictions), [list(references)])
     return {"bleu": float(bleu.score), "chrf": float(chrf.score)}
+
+
+def sentence_translation_metrics(
+    prediction: str,
+    reference: str,
+    *,
+    target_language: str = "",
+) -> dict[str, float]:
+    try:
+        import sacrebleu
+    except ImportError as exc:
+        raise RuntimeError("install the evaluation extra: pip install '.[eval]'") from exc
+    bleu = sacrebleu.sentence_bleu(
+        prediction,
+        [reference],
+        tokenize=bleu_tokenizer(target_language),
+    )
+    chrf = sacrebleu.sentence_chrf(prediction, [reference])
+    return {"bleu": float(bleu.score), "chrf": float(chrf.score)}
+
+
+def bleu_tokenizer(target_language: str) -> str:
+    normalized = normalized_text(target_language)
+    if normalized.startswith("zh") or "chinese" in normalized:
+        return "zh"
+    return "13a"

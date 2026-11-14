@@ -27,22 +27,25 @@ is invalid.
 
 ## Stage 2: public evaluation
 
-- TICO-19: at least 100 term-bearing records in three target languages
+- TICO-19: 500 term-bearing records for each of English-French,
+  English-Latin American Spanish, and English-Simplified Chinese
 - WMT25 Track 1: 500 records for each of English-German, English-Spanish, English-Russian
-- WMT25 Track 2: all released finance documents in both directions
+- WMT25 Track 2: two documents from every released year (2015-2024), covering both
+  English-Traditional Chinese and Traditional Chinese-English
+
+The finance sample is balanced by release year because each source document is long.
+The full 111-document run remains available through the same adapter.
 
 ## Primary outputs
 
 - raw prediction JSONL for every condition
 - aggregate BLEU and chrF
 - terminology success rate
-- paired per-record differences
+- paired bootstrap confidence intervals for proper-term versus no-term changes
 - generation time and model/runtime metadata
-- errors grouped by missing term, wrong term, grammar, and context mismatch
 
 ## Interpretation
 
 A glossary method is considered useful only when terminology success improves and
 overall translation quality does not show a practically meaningful decline. Results
 must be reported by domain and language direction rather than as one pooled number.
-

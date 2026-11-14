@@ -11,7 +11,7 @@ set -euo pipefail
 
 : "${PROJECT_DIR:?Set PROJECT_DIR to the repository root}"
 : "${MODEL_PATH:?Set MODEL_PATH to the downloaded open model snapshot}"
-VLLM_BIN="${VLLM_BIN:-/data/home/mk01/.venvs/focus_tempnew/bin/vllm}"
+VLLM_BIN="${VLLM_BIN:-vllm}"
 PYTHON="${PYTHON:-$PROJECT_DIR/.venv/bin/python}"
 MODEL_NAME="${MODEL_NAME:-Qwen/Qwen3-8B}"
 RUN_TAG="${RUN_TAG:-v1}"

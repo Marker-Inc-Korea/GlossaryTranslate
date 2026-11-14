@@ -11,7 +11,7 @@ set -euo pipefail
 
 : "${PROJECT_DIR:?Set PROJECT_DIR to the repository root}"
 : "${MODEL_PATH:?Set MODEL_PATH to the downloaded open model snapshot}"
-VLLM_BIN="${VLLM_BIN:-/data/home/mk01/.venvs/focus_tempnew/bin/vllm}"
+VLLM_BIN="${VLLM_BIN:-vllm}"
 PYTHON="${PYTHON:-$PROJECT_DIR/.venv/bin/python}"
 MODEL_NAME="${MODEL_NAME:-Qwen/Qwen3-8B}"
 MODEL_REVISION="${MODEL_REVISION:-unknown}"
@@ -55,8 +55,11 @@ prepare_data() {
       --output "data/processed/wmt25-it-en-$lang-500.jsonl"
   done
   "$PYTHON" -m glossaryrag.cli prepare wmt25-track2 \
-    --input data/raw/wmt25 --per-year-limit 2 \
-    --output data/processed/wmt25-finance-balanced-20.jsonl
+    --input data/raw/wmt25 --per-year-limit 2 --direction en-zh \
+    --output data/processed/wmt25-finance-en-zh-10.jsonl
+  "$PYTHON" -m glossaryrag.cli prepare wmt25-track2 \
+    --input data/raw/wmt25 --per-year-limit 2 --direction zh-en \
+    --output data/processed/wmt25-finance-zh-en-10.jsonl
 }
 
 prepare_data
@@ -111,7 +114,8 @@ run_one tico19-medical-en-zh data/processed/tico19-en-zh-500.jsonl no_term,prope
 run_one wmt25-it-en-de data/processed/wmt25-it-en-de-500.jsonl no_term,proper,random 512
 run_one wmt25-it-en-es data/processed/wmt25-it-en-es-500.jsonl no_term,proper,random 512
 run_one wmt25-it-en-ru data/processed/wmt25-it-en-ru-500.jsonl no_term,proper,random 512
-run_one wmt25-finance-balanced data/processed/wmt25-finance-balanced-20.jsonl no_term,proper,random 4096
+run_one wmt25-finance-en-zh data/processed/wmt25-finance-en-zh-10.jsonl no_term,proper,random 4096
+run_one wmt25-finance-zh-en data/processed/wmt25-finance-zh-en-10.jsonl no_term,proper,random 4096
 
 "$PYTHON" experiments/build_public_report.py \
   --input "Medical en-fr=results/tico19-medical-en-fr-${RUN_TAG}.predictions.jsonl" \
@@ -120,7 +124,8 @@ run_one wmt25-finance-balanced data/processed/wmt25-finance-balanced-20.jsonl no
   --input "IT en-de=results/wmt25-it-en-de-${RUN_TAG}.predictions.jsonl" \
   --input "IT en-es=results/wmt25-it-en-es-${RUN_TAG}.predictions.jsonl" \
   --input "IT en-ru=results/wmt25-it-en-ru-${RUN_TAG}.predictions.jsonl" \
-  --input "Finance en-zh and zh-en=results/wmt25-finance-balanced-${RUN_TAG}.predictions.jsonl" \
+  --input "Finance en-zh=results/wmt25-finance-en-zh-${RUN_TAG}.predictions.jsonl" \
+  --input "Finance zh-en=results/wmt25-finance-zh-en-${RUN_TAG}.predictions.jsonl" \
   --output "reports/public-benchmark-${RUN_TAG}.md" \
   --json-output "reports/public-benchmark-${RUN_TAG}.json" \
   --model "$MODEL_NAME" \

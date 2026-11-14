@@ -27,3 +27,25 @@ def test_case_sensitive_mode() -> None:
     )
     assert retriever.match("app") == ()
     assert len(retriever.match("APP")) == 1
+
+
+def test_ascii_terms_do_not_match_inside_unrelated_words() -> None:
+    retriever = TrieGlossaryRetriever([GlossaryEntry("flu", "grippe")])
+
+    assert retriever.match("Drink plenty of fluids.") == ()
+    assert retriever.match("This is influential.") == ()
+    assert len(retriever.match("The flu spread quickly.")) == 1
+
+
+def test_common_english_inflections_are_matched() -> None:
+    retriever = TrieGlossaryRetriever(
+        [
+            GlossaryEntry("infect", "infecter"),
+            GlossaryEntry("spread", "propager"),
+            GlossaryEntry("infection", "infection"),
+        ]
+    )
+
+    matches = retriever.match("Infected patients had infections spreading quickly.")
+
+    assert [match.entry.source for match in matches] == ["infect", "infection", "spread"]

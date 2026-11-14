@@ -14,6 +14,8 @@ class RetrievalConfig:
     case_sensitive: bool = False
     longest_overlap_wins: bool = True
     unique_source_terms: bool = True
+    ascii_word_boundaries: bool = True
+    allow_english_inflections: bool = True
     max_terms: int | None = None
 
 
@@ -40,6 +42,33 @@ class TrieGlossaryRetriever:
         normalized = unicodedata.normalize("NFC", value)
         return normalized if self.config.case_sensitive else normalized.casefold()
 
+    @staticmethod
+    def _is_ascii_word(character: str) -> bool:
+        return bool(character) and character.isascii() and character.isalnum()
+
+    def _valid_ascii_boundary(self, text: str, start: int, end: int, entry: GlossaryEntry) -> bool:
+        if not self.config.ascii_word_boundaries:
+            return True
+        source = self._normalize(entry.source)
+        if not source or not source[0].isascii() or not source[-1].isascii():
+            return True
+        if not source[0].isalnum() or not source[-1].isalnum():
+            return True
+        if start > 0 and self._is_ascii_word(text[start - 1]):
+            return False
+        if end >= len(text) or not self._is_ascii_word(text[end]):
+            return True
+        if not self.config.allow_english_inflections:
+            return False
+        suffixes = ("ing", "ed", "es", "s", "d")
+        for suffix in suffixes:
+            suffix_end = end + len(suffix)
+            if text[end:suffix_end] != suffix:
+                continue
+            if suffix_end >= len(text) or not self._is_ascii_word(text[suffix_end]):
+                return True
+        return False
+
     def match(self, text: str, *, max_terms: int | None = None) -> tuple[TermMatch, ...]:
         normalized = self._normalize(text)
         candidates: list[TermMatch] = []
@@ -52,7 +81,9 @@ class TrieGlossaryRetriever:
                     break
                 node = next_node
                 for entry in node.get(_ENTRY, []):
-                    candidates.append(TermMatch(entry=entry, start=start, end=cursor + 1))
+                    end = cursor + 1
+                    if self._valid_ascii_boundary(normalized, start, end, entry):
+                        candidates.append(TermMatch(entry=entry, start=start, end=end))
                 cursor += 1
 
         candidates.sort(

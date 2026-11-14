@@ -69,11 +69,16 @@ def prepare_wmt25_track2(
     years: Iterable[int] = range(2015, 2025),
     limit: int | None = None,
     per_year_limit: int | None = None,
+    direction: str = "both",
 ) -> int:
+    if direction not in {"both", "en-zh", "zh-en"}:
+        raise ValueError("direction must be one of: both, en-zh, zh-en")
     records: list[BenchmarkRecord] = []
     for year in years:
         path = Path(reference_dir) / f"full_data_{year}.jsonl"
         source_code, target_code = ("en", "zh") if year % 2 else ("zh", "en")
+        if direction != "both" and direction != f"{source_code}-{target_code}":
+            continue
         source_name, target_name = (
             ("English", "Traditional Chinese")
             if source_code == "en"

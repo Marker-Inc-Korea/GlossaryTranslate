@@ -122,9 +122,17 @@ def score_predictions(path: str | Path) -> dict[str, Any]:
         selected = [row for row in rows if row.get("mode") == mode]
         if not selected:
             continue
+        target_languages = {str(row.get("target_lang") or "") for row in selected}
+        if len(target_languages) != 1:
+            raise ValueError(
+                f"prediction file mixes target languages in mode {mode}: "
+                f"{sorted(target_languages)}; score each direction separately"
+            )
+        target_language = next(iter(target_languages))
         metrics = corpus_translation_metrics(
             [str(row["prediction"]) for row in selected],
             [str(row["reference"]) for row in selected],
+            target_language=target_language,
         )
         term_matched = sum(int(row.get("term_matched") or 0) for row in selected)
         term_total = sum(int(row.get("term_total") or 0) for row in selected)
@@ -136,6 +144,7 @@ def score_predictions(path: str | Path) -> dict[str, Any]:
                 "term_total": term_total,
                 "mean_elapsed_seconds": sum(float(row["elapsed_seconds"]) for row in selected)
                 / len(selected),
+                "target_language": target_language,
             }
         )
         report["modes"][mode] = metrics

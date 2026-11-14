@@ -53,6 +53,7 @@ def _parser() -> argparse.ArgumentParser:
     prepare.add_argument("--terminology", type=Path)
     prepare.add_argument("--limit", type=int)
     prepare.add_argument("--per-year-limit", type=int)
+    prepare.add_argument("--direction", choices=("both", "en-zh", "zh-en"), default="both")
 
     benchmark = subparsers.add_parser(
         "benchmark",
@@ -139,6 +140,7 @@ def main() -> int:
                 args.output,
                 limit=args.limit,
                 per_year_limit=args.per_year_limit,
+                direction=args.direction,
             )
         else:
             if args.terminology is None:

@@ -113,6 +113,27 @@ def test_prepare_wmt25_track2_can_limit_each_year(tmp_path: Path) -> None:
     assert count == 2
 
 
+def test_prepare_wmt25_track2_can_select_direction(tmp_path: Path) -> None:
+    source = tmp_path / "references"
+    source.mkdir()
+    (source / "full_data_2015.jsonl").write_text(
+        json.dumps({"en": "bond", "zh": "債券", "proper": {"bond": "債券"}}) + "\n",
+        encoding="utf-8",
+    )
+    (source / "full_data_2016.jsonl").write_text(
+        json.dumps({"zh": "債券", "en": "bond", "proper": {"債券": "bond"}}) + "\n",
+        encoding="utf-8",
+    )
+
+    output = tmp_path / "prepared.jsonl"
+    count = prepare_wmt25_track2(source, output, years=(2015, 2016), direction="zh-en")
+
+    assert count == 1
+    row = json.loads(output.read_text(encoding="utf-8"))
+    assert row["source_lang"] == "Traditional Chinese"
+    assert row["target_lang"] == "English"
+
+
 def test_tico_terminology_loader_skips_blank_rows(tmp_path: Path) -> None:
     path = tmp_path / "terms.csv"
     path.write_text(

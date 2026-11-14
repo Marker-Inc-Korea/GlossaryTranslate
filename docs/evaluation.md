@@ -13,10 +13,16 @@ Report at least:
 - terminology success rate against the proper-term references
 - mean generation time
 
+Terminology success is computed over unique proper glossary entries matched in each
+source record. An entry succeeds when its preferred target or an accepted alternative
+appears in the model output after Unicode normalization and case folding. This is a
+strict surface-form measure; it does not replace human adequacy review.
+
 Use paired records and deterministic decoding. Keep raw predictions and exact command
 lines. For a public report, include model revision, runtime version, hardware, seeds,
 dataset revision, and source hashes.
 
-Report paired 95% bootstrap confidence intervals for the change from `no_term`
-to `proper`. The resampling unit is the source record, so baseline and treatment
-outputs from the same input remain paired.
+Report paired 95% bootstrap confidence intervals for the mean per-record change from
+`no_term` to `proper`. The resampling unit is the source record, so baseline and
+treatment outputs from the same input remain paired. Use the SacreBLEU Chinese
+tokenizer for Chinese targets and score opposite translation directions separately.

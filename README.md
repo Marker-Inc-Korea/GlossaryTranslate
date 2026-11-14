@@ -1,5 +1,7 @@
 # GlossaryRAG Translate
 
+[한국어 문서](README.ko.md)
+
 **Bring an organization's terminology to an LLM translator without retraining the model.**
 
 GlossaryRAG Translate indexes a CSV, JSONL, TSV, or TBX termbase, retrieves terms
@@ -13,6 +15,7 @@ translation or interpretation standards.
 ## What it provides
 
 - reusable Trie-based exact term retrieval
+- ASCII word-boundary checks with common English inflection support
 - longest-overlap handling for nested terms
 - CSV, TSV, JSONL, and TBX glossary input
 - model-neutral structured glossary prompts
@@ -93,6 +96,7 @@ glossaryrag prepare wmt25-track1 \
 glossaryrag prepare wmt25-track2 \
   --input data/raw/wmt25 \
   --per-year-limit 2 \
+  --direction en-zh \
   --output data/processed/wmt25-finance.jsonl
 ```
 
@@ -134,11 +138,14 @@ The initial public study uses one Apache-2.0 open model and three domains:
 | Finance | WMT25 Track 2 | long document with a large corpus-level dictionary |
 
 See [evaluation protocol](docs/evaluation.md) and
-[public data notes](docs/public-data.md).
+[public data notes](docs/public-data.md). Exact reference model and inference settings
+are recorded in [reference runtime](docs/reference-runtime.md).
 
 For production planning, see the
 [organization adoption guide](docs/organization-adoption.md). For release steps,
-see [GitHub and Hugging Face publishing](docs/publishing.md).
+see [GitHub and Hugging Face publishing](docs/publishing.md). The project's scope
+relative to prior terminology-aware translation work is stated in
+[related work](docs/related-work.md).
 
 ## Design choices
 

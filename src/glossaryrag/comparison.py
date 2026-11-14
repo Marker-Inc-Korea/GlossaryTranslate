@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from .io import read_jsonl
-from .metrics import corpus_translation_metrics
+from .metrics import sentence_translation_metrics
 
 
 def _percentile(values: Sequence[float], quantile: float) -> float:
@@ -37,33 +37,61 @@ def compare_prediction_modes(
     if not pairs:
         raise ValueError(f"no paired {baseline}/{treatment} predictions in {path}")
 
-    def score(sample: Sequence[dict[str, dict[str, Any]]]) -> dict[str, float]:
-        references = [str(pair[baseline]["reference"]) for pair in sample]
-        baseline_metrics = corpus_translation_metrics(
-            [str(pair[baseline]["prediction"]) for pair in sample], references
+    paired_deltas: list[dict[str, float]] = []
+    target_languages = set()
+    for pair in pairs:
+        baseline_row = pair[baseline]
+        treatment_row = pair[treatment]
+        target_language = str(baseline_row.get("target_lang") or "")
+        if target_language != str(treatment_row.get("target_lang") or ""):
+            raise ValueError("paired predictions have different target languages")
+        target_languages.add(target_language)
+        reference = str(baseline_row["reference"])
+        baseline_metrics = sentence_translation_metrics(
+            str(baseline_row["prediction"]),
+            reference,
+            target_language=target_language,
         )
-        treatment_metrics = corpus_translation_metrics(
-            [str(pair[treatment]["prediction"]) for pair in sample], references
+        treatment_metrics = sentence_translation_metrics(
+            str(treatment_row["prediction"]),
+            reference,
+            target_language=target_language,
         )
-        baseline_matched = sum(int(pair[baseline].get("term_matched") or 0) for pair in sample)
-        treatment_matched = sum(int(pair[treatment].get("term_matched") or 0) for pair in sample)
-        total = sum(int(pair[baseline].get("term_total") or 0) for pair in sample)
-        baseline_term = baseline_matched / total if total else 0.0
-        treatment_term = treatment_matched / total if total else 0.0
-        return {
-            "bleu_delta": treatment_metrics["bleu"] - baseline_metrics["bleu"],
-            "chrf_delta": treatment_metrics["chrf"] - baseline_metrics["chrf"],
-            "term_success_delta": treatment_term - baseline_term,
-        }
+        baseline_total = int(baseline_row.get("term_total") or 0)
+        treatment_total = int(treatment_row.get("term_total") or 0)
+        baseline_term = (
+            int(baseline_row.get("term_matched") or 0) / baseline_total
+            if baseline_total
+            else 0.0
+        )
+        treatment_term = (
+            int(treatment_row.get("term_matched") or 0) / treatment_total
+            if treatment_total
+            else 0.0
+        )
+        paired_deltas.append(
+            {
+                "bleu_delta": treatment_metrics["bleu"] - baseline_metrics["bleu"],
+                "chrf_delta": treatment_metrics["chrf"] - baseline_metrics["chrf"],
+                "term_success_delta": treatment_term - baseline_term,
+            }
+        )
+    if len(target_languages) != 1:
+        raise ValueError(
+            f"prediction file mixes target languages: {sorted(target_languages)}; "
+            "compare each direction separately"
+        )
 
-    observed = score(pairs)
+    observed = {
+        name: sum(row[name] for row in paired_deltas) / len(paired_deltas)
+        for name in paired_deltas[0]
+    }
     rng = random.Random(seed)
     distributions = {name: [] for name in observed}
     for _ in range(bootstrap_samples):
-        sample = [pairs[rng.randrange(len(pairs))] for _ in range(len(pairs))]
-        sample_score = score(sample)
-        for name, value in sample_score.items():
-            distributions[name].append(value)
+        sample = [paired_deltas[rng.randrange(len(paired_deltas))] for _ in paired_deltas]
+        for name in observed:
+            distributions[name].append(sum(row[name] for row in sample) / len(sample))
 
     return {
         "prediction_file": str(path),
@@ -71,6 +99,7 @@ def compare_prediction_modes(
         "treatment": treatment,
         "paired_records": len(pairs),
         "bootstrap_samples": bootstrap_samples,
+        "estimator": "paired mean of per-record metric deltas",
         "deltas": {
             name: {
                 "observed": value,
