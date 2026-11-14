@@ -27,7 +27,7 @@ is invalid.
 
 ## Stage 2: public evaluation
 
-- TICO-19: 500 term-bearing records for each of English-French,
+- TICO-19: 500 term-bearing records for each of English-Russian,
   English-Latin American Spanish, and English-Simplified Chinese
 - WMT25 Track 1: 500 records for each of English-German, English-Spanish, English-Russian
 - WMT25 Track 2: two documents from every released year (2015-2024), covering both

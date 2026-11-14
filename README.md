@@ -66,7 +66,7 @@ glossaryrag translate \
 ## 3. Download public evaluation data
 
 ```bash
-glossaryrag download tico19 --output data/raw/tico19 --languages fr,es-LA,zh
+glossaryrag download tico19 --output data/raw/tico19 --languages ru,es-LA,zh
 glossaryrag download wmt25 --output data/raw/wmt25
 ```
 
@@ -80,10 +80,10 @@ product data.
 # Medical/public health
 glossaryrag prepare tico19 \
   --input data/raw/tico19 \
-  --terminology data/raw/tico19/terminologies/f_en-fr_XX.csv \
-  --target-lang fr \
+  --terminology data/raw/tico19/terminologies/f_en-ru_RU.csv \
+  --target-lang ru \
   --limit 100 \
-  --output data/processed/tico19-en-fr.jsonl
+  --output data/processed/tico19-en-ru.jsonl
 
 # Information technology
 glossaryrag prepare wmt25-track1 \

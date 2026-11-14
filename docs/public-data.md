@@ -16,3 +16,10 @@ Official sources:
 - https://tico-19.github.io/
 - https://github.com/wmt-conference/wmt25-terminology
 
+## Snapshot validation note
+
+The downloaded English-French TICO-19 test snapshot contains mismatched source and
+reference rows in an observed `PubMed_8` segment. French is therefore excluded from
+the release benchmark rather than reporting a misleading score. The medical study
+uses Russian, Latin American Spanish, and Simplified Chinese after language-script
+and sampled row-alignment checks.

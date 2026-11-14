@@ -18,7 +18,8 @@ MODEL_REVISION="${MODEL_REVISION:-unknown}"
 RUN_TAG="${RUN_TAG:-public-v1}"
 PORT="${PORT:-$((25000 + SLURM_JOB_ID % 1000))}"
 BASE_URL="http://127.0.0.1:$PORT"
-VLLM_VERSION="$($VLLM_BIN --version 2>/dev/null | awk '{print $2}' || true)"
+VLLM_PYTHON="$(dirname "$VLLM_BIN")/python"
+VLLM_VERSION="$($VLLM_PYTHON -c 'import importlib.metadata; print(importlib.metadata.version("vllm"))' 2>/dev/null || true)"
 GPU_NAME="$(nvidia-smi --query-gpu=name --format=csv,noheader | head -n 1)"
 
 export VLLM_USE_FLASHINFER_SAMPLER=0
@@ -36,9 +37,9 @@ fi
 prepare_data() {
   "$PYTHON" -m glossaryrag.cli prepare tico19 \
     --input data/raw/tico19 \
-    --terminology data/raw/tico19/terminologies/f_en-fr_XX.csv \
-    --target-lang fr --limit 500 \
-    --output data/processed/tico19-en-fr-500.jsonl
+    --terminology data/raw/tico19/terminologies/f_en-ru_RU.csv \
+    --target-lang ru --limit 500 \
+    --output data/processed/tico19-en-ru-500.jsonl
   "$PYTHON" -m glossaryrag.cli prepare tico19 \
     --input data/raw/tico19 \
     --terminology data/raw/tico19/terminologies/f_en-es_XX.csv \
@@ -108,7 +109,7 @@ run_one() {
     --max-tokens "$max_tokens"
 }
 
-run_one tico19-medical-en-fr data/processed/tico19-en-fr-500.jsonl no_term,proper 512
+run_one tico19-medical-en-ru data/processed/tico19-en-ru-500.jsonl no_term,proper 512
 run_one tico19-medical-en-es-la data/processed/tico19-en-es-la-500.jsonl no_term,proper 512
 run_one tico19-medical-en-zh data/processed/tico19-en-zh-500.jsonl no_term,proper 512
 run_one wmt25-it-en-de data/processed/wmt25-it-en-de-500.jsonl no_term,proper,random 512
@@ -118,7 +119,7 @@ run_one wmt25-finance-en-zh data/processed/wmt25-finance-en-zh-10.jsonl no_term,
 run_one wmt25-finance-zh-en data/processed/wmt25-finance-zh-en-10.jsonl no_term,proper,random 4096
 
 "$PYTHON" experiments/build_public_report.py \
-  --input "Medical en-fr=results/tico19-medical-en-fr-${RUN_TAG}.predictions.jsonl" \
+  --input "Medical en-ru=results/tico19-medical-en-ru-${RUN_TAG}.predictions.jsonl" \
   --input "Medical en-es-LA=results/tico19-medical-en-es-la-${RUN_TAG}.predictions.jsonl" \
   --input "Medical en-zh=results/tico19-medical-en-zh-${RUN_TAG}.predictions.jsonl" \
   --input "IT en-de=results/wmt25-it-en-de-${RUN_TAG}.predictions.jsonl" \
@@ -131,7 +132,7 @@ run_one wmt25-finance-zh-en data/processed/wmt25-finance-zh-en-10.jsonl no_term,
   --model "$MODEL_NAME" \
   --model-revision "$MODEL_REVISION" \
   --runtime "vLLM ${VLLM_VERSION:-unknown}" \
-  --hardware "$(hostname), one Slurm-allocated $GPU_NAME" \
+  --hardware "one Slurm-allocated $GPU_NAME GPU" \
   --bootstrap-samples 1000
 
 echo "PUBLIC_STUDY=PASS"
