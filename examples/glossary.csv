@@ -1,0 +1,6 @@
+source,target,source_lang,target_lang,domain,priority,note
+data controller,responsable del tratamiento,en,es,privacy,10,GDPR role
+personal data,datos personales,en,es,privacy,10,GDPR concept
+processing,tratamiento,en,es,privacy,5,GDPR operation
+controller,responsable,en,es,privacy,1,Generic role
+

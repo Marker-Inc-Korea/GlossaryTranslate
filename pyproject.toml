@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "glossaryrag-translate"
+version = "0.1.0"
+description = "Retrieval-augmented LLM translation with organization glossaries"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+authors = [{name = "GlossaryRAG Translate Authors"}]
+keywords = ["translation", "terminology", "glossary", "rag", "llm"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Text Processing :: Linguistic",
+]
+dependencies = []
+
+[project.optional-dependencies]
+eval = ["sacrebleu>=2.4,<3"]
+dev = ["pytest>=8,<10", "ruff>=0.8,<1"]
+space = ["gradio>=5,<7"]
+
+[project.scripts]
+glossaryrag = "glossaryrag.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/OWNER/glossaryrag-translate"
+Documentation = "https://github.com/OWNER/glossaryrag-translate/tree/main/docs"
+Issues = "https://github.com/OWNER/glossaryrag-translate/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/glossaryrag"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
