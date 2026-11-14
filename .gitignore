@@ -13,6 +13,8 @@ data/processed/*
 !data/processed/.gitkeep
 results/*
 !results/.gitkeep
+reports/*.json
+reports/*.jsonl
+reports/*.csv
 *.log
 .env
-

@@ -67,6 +67,7 @@ def prepare_wmt25_track2(
     output: str | Path,
     *,
     years: Iterable[int] = range(2015, 2025),
+    limit: int | None = None,
 ) -> int:
     records: list[BenchmarkRecord] = []
     for year in years:
@@ -78,6 +79,8 @@ def prepare_wmt25_track2(
             else ("Traditional Chinese", "English")
         )
         for row_index, row in enumerate(_read_rows(path)):
+            if limit is not None and len(records) >= limit:
+                break
             records.append(
                 BenchmarkRecord(
                     record_id=f"wmt25-finance-{source_code}-{target_code}-{year}-{row_index:03d}",
@@ -101,5 +104,7 @@ def prepare_wmt25_track2(
                     metadata={"upstream": "WMT25 Terminology Track 2", "year": year},
                 )
             )
+        if limit is not None and len(records) >= limit:
+            break
     write_jsonl(output, (record.to_dict() for record in records))
     return len(records)

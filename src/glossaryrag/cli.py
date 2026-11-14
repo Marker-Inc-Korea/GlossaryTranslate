@@ -126,6 +126,7 @@ def main() -> int:
             count = prepare_wmt25_track2(
                 args.input / "ranking/references/track2",
                 args.output,
+                limit=args.limit,
             )
         else:
             if args.terminology is None:
