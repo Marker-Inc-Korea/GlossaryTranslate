@@ -31,9 +31,9 @@ space = ["gradio>=5,<7"]
 glossaryrag = "glossaryrag.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/OWNER/glossaryrag-translate"
-Documentation = "https://github.com/OWNER/glossaryrag-translate/tree/main/docs"
-Issues = "https://github.com/OWNER/glossaryrag-translate/issues"
+Homepage = "https://github.com/Marker-Inc-Korea/GlossaryTranslate"
+Documentation = "https://github.com/Marker-Inc-Korea/GlossaryTranslate/tree/main/docs"
+Issues = "https://github.com/Marker-Inc-Korea/GlossaryTranslate/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/glossaryrag"]
@@ -44,4 +44,3 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
-

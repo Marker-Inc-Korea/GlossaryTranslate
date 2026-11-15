@@ -29,8 +29,8 @@ GlossaryRAG Translate는 CSV·TSV·JSONL·TBX 용어사전을 색인하고, 입�
 ## 설치
 
 ```bash
-git clone https://github.com/OWNER/glossaryrag-translate.git
-cd glossaryrag-translate
+git clone https://github.com/Marker-Inc-Korea/GlossaryTranslate.git
+cd GlossaryTranslate
 python -m venv .venv
 source .venv/bin/activate
 pip install -e '.[eval]'

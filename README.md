@@ -30,8 +30,8 @@ No private model, dataset, API key, or organization glossary is included.
 ## Installation
 
 ```bash
-git clone https://github.com/OWNER/glossaryrag-translate.git
-cd glossaryrag-translate
+git clone https://github.com/Marker-Inc-Korea/GlossaryTranslate.git
+cd GlossaryTranslate
 python -m venv .venv
 source .venv/bin/activate
 pip install -e '.[eval]'

@@ -2,12 +2,11 @@
 
 ## GitHub
 
-1. Create an empty public repository named `glossaryrag-translate`.
-2. Replace `OWNER` in `README.md` and `pyproject.toml`.
-3. Add the remote and push the recorded history:
+1. Create the empty public repository `Marker-Inc-Korea/GlossaryTranslate`.
+2. Add the SSH remote and push the recorded history:
 
 ```bash
-git remote add origin https://github.com/OWNER/glossaryrag-translate.git
+git remote add origin git@github.com:Marker-Inc-Korea/GlossaryTranslate.git
 git push -u origin main
 ```
 
