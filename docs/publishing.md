@@ -27,7 +27,7 @@ Build a result-only dataset directory:
 
 ```bash
 python scripts/export_hf_results.py \
-  --report reports/public-benchmark-public-v1.md \
+  --report reports/public-benchmark-public-v2.md \
   --output dist/hf-results
 ```
 
